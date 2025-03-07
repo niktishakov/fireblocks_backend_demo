@@ -1,9 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000; // Default to 10000 as recommended
+const host = '0.0.0.0'; // Bind to all network interfaces
 
 // Middleware
 app.use(cors());
@@ -36,6 +38,14 @@ app.post('/api/items', (req, res) => {
     res.status(201).json({ message: 'Item created successfully', item: newItem });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+// Create HTTP server with proper timeout settings
+const server = http.createServer(app);
+
+// Set higher timeout values as recommended
+server.keepAliveTimeout = 120000; // 120 seconds
+server.headersTimeout = 120000; // 120 seconds
+
+// Start the server
+server.listen(port, host, () => {
+    console.log(`Server is running on http://${host}:${port}`);
 }); 
